@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class App {
-	private final static int base = 12;
+	private final static int tamanho = 12;
 	private static int[][] matriz;
 	private static int total;
 	private static List<Posicao> movimentos;
@@ -26,16 +26,16 @@ public class App {
 		movimentos.add(new Posicao(-2, -1));
 		movimentos.add(new Posicao(-1, -2));
 
-		for (int i = 0; i < base; i++) {
-			for (int j = 0; j < base; j++) {
-				if (i < 2 || i > base - 3 || j < 2 || j > base - 3) {
+		for (int i = 0; i < tamanho; i++) {
+			for (int j = 0; j < tamanho; j++) {
+				if (i < 2 || i > tamanho - 3 || j < 2 || j > tamanho - 3) {
 					matriz[i][j] = -1;
 				}
 			}
 		}
 
 		int x = 2 + 4;
-		int y = 2 + 3;
+		int y = 2 + 5;
 
 		matriz[x][y] = 1;
 
@@ -64,8 +64,10 @@ public class App {
 
 		for (Vizinho vizinho : vizinhos) {
 			matriz[vizinho.getX()][vizinho.getY()] = count;
-			if (!semSaida(count, vizinho.getX(), vizinho.getY()) && run(vizinho.getX(), vizinho.getY(), count + 1)) {
-				return true;
+			if (!semSaida(count, vizinho.getX(), vizinho.getY())) {
+				if (run(vizinho.getX(), vizinho.getY(), count + 1)) {
+					return true;
+				}
 			}
 			matriz[x][y] = 0;
 		}
