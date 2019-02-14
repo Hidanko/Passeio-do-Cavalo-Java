@@ -8,14 +8,10 @@ import java.util.List;
 public class App {
 	private final static int tamanho = 12;
 	private static int[][] matriz;
-	private static int total;
+	private static int total = 64;
 	private static List<Posicao> movimentos;
 
 	public static void main(String[] args) {
-
-		matriz = new int[12][12];
-		total = 64;
-
 		movimentos = new ArrayList<Posicao>();
 		movimentos.add(new Posicao(1, -2));
 		movimentos.add(new Posicao(2, -1));
@@ -26,6 +22,8 @@ public class App {
 		movimentos.add(new Posicao(-2, -1));
 		movimentos.add(new Posicao(-1, -2));
 
+		matriz = new int[12][12];
+
 		for (int i = 0; i < tamanho; i++) {
 			for (int j = 0; j < tamanho; j++) {
 				if (i < 2 || i > tamanho - 3 || j < 2 || j > tamanho - 3) {
@@ -33,7 +31,7 @@ public class App {
 				}
 			}
 		}
-
+		//adicionar 2 por causa da borda
 		int x = 2 + 4;
 		int y = 2 + 5;
 
@@ -52,9 +50,9 @@ public class App {
 		}
 		List<Vizinho> vizinhos = getVizinhos(x, y);
 
-		if (vizinhos.isEmpty() && count != total)
+		if (vizinhos.isEmpty() && count != total) {
 			return false;
-
+		}
 		// ordenação
 		Collections.sort(vizinhos, new Comparator<Vizinho>() {
 			public int compare(Vizinho a, Vizinho b) {
@@ -76,12 +74,12 @@ public class App {
 	}
 
 	// retornar todos os movimentos possiveis
-	private static List<Vizinho> getVizinhos(int r, int c) {
+	private static List<Vizinho> getVizinhos(int x, int y) {
 		List<Vizinho> vizinhos = new ArrayList<Vizinho>();
 		for (Posicao p : movimentos) {
-			if (matriz[r + p.getY()][c + p.getX()] == 0) {
-				int num = numeroVizinhos(r + p.getY(), c + p.getX());
-				vizinhos.add(new Vizinho(r + p.getY(), c + p.getX(), num));
+			if (matriz[x + p.getY()][y + p.getX()] == 0) {
+				int num = numeroVizinhos(x + p.getY(), y + p.getX());
+				vizinhos.add(new Vizinho(x + p.getY(), y + p.getX(), num));
 			}
 		}
 		return vizinhos;
@@ -97,9 +95,22 @@ public class App {
 		return num;
 	}
 
-	private static boolean semSaida(int cont, int r, int c) {
+	private static void imprimeMatriz() {
+		for (int[] row : matriz) {
+			for (int i : row) {
+				if (i == -1) {
+					continue;
+				}
+				System.out.print(i + "\t");
+			}
+			System.out.println("\n");
+		}
+	}
+
+	// otimizacao
+	private static boolean semSaida(int cont, int x, int y) {
 		if (cont < total - 1) {
-			List<Vizinho> vizinhos = getVizinhos(r, c);
+			List<Vizinho> vizinhos = getVizinhos(x, y);
 			for (Vizinho vizinho : vizinhos) {
 				if (numeroVizinhos(vizinho.getX(), vizinho.getY()) == 0) {
 					return true;
@@ -109,14 +120,4 @@ public class App {
 		return false;
 	}
 
-	private static void imprimeMatriz() {
-		for (int[] row : matriz) {
-			for (int i : row) {
-				if (i == -1)
-					continue;
-				System.out.print(i + "\t");
-			}
-			System.out.println("\n");
-		}
-	}
 }
