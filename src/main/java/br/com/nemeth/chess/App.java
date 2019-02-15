@@ -6,10 +6,13 @@ import java.util.Comparator;
 import java.util.List;
 
 public class App {
+	// +2 em cada lado do tabuleiro para que em vez de validar as 8 posições, apenas validar se o numero é 0
 	private final static int tamanho = 12;
 	private static int[][] matriz;
 	private static int total = 64;
 	private static List<Posicao> movimentos;
+	private static int iteracoes = 0;
+	private static int iteracoesIgnoradas = 0;
 
 	public static void main(String[] args) {
 		movimentos = new ArrayList<Posicao>();
@@ -32,18 +35,23 @@ public class App {
 			}
 		}
 		//adicionar 2 por causa da borda
-		int x = 2 + 4;
-		int y = 2 + 5;
+		int x = 2 + 0;
+		int y = 2 + 0;
 
 		matriz[x][y] = 1;
-
+		Long antes = System.currentTimeMillis();
 		run(x, y, 2);
+		Long depois = System.currentTimeMillis();
+		System.out.println("Tempo de execução: "+(depois - antes));
+		System.out.println("Iteracões realizadas: "+ iteracoes);
+		System.out.println("Iterações ignoradas com a otimização: "+ iteracoesIgnoradas);
 		imprimeMatriz();
 
 	}
 
 	// recursividade
 	private static boolean run(int x, int y, int count) {
+		iteracoes++;
 		// criterio de parada
 		if (count > total) {
 			return true;
@@ -53,7 +61,7 @@ public class App {
 		if (vizinhos.isEmpty() && count != total) {
 			return false;
 		}
-		// ordenação
+		// Ordenação para dar preferencia aos vizinhos com mais vizinhos
 		Collections.sort(vizinhos, new Comparator<Vizinho>() {
 			public int compare(Vizinho a, Vizinho b) {
 				return a.getNumVizinhos() - b.getNumVizinhos();
@@ -62,10 +70,13 @@ public class App {
 
 		for (Vizinho vizinho : vizinhos) {
 			matriz[vizinho.getX()][vizinho.getY()] = count;
+			// Se o vizinho não possui vizinhos, ignorar iteração
 			if (!semSaida(count, vizinho.getX(), vizinho.getY())) {
 				if (run(vizinho.getX(), vizinho.getY(), count + 1)) {
 					return true;
 				}
+			} else {
+				iteracoesIgnoradas++;
 			}
 			matriz[x][y] = 0;
 		}
